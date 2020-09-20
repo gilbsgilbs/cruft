@@ -19,20 +19,16 @@ def cruft_runner():
 
 @pytest.fixture
 def cookiecutter_dir(tmpdir):
-    yield Path(
-        cruft.create("https://github.com/cruft/cookiecutter-test", Path(tmpdir), directory="dir")
-    )
+    yield cruft.create("https://github.com/cruft/cookiecutter-test", Path(tmpdir), directory="dir")
 
 
 @pytest.fixture
 def cookiecutter_dir_updated(tmpdir):
-    yield Path(
-        cruft.create(
-            "https://github.com/cruft/cookiecutter-test",
-            Path(tmpdir),
-            directory="dir",
-            checkout="updated",
-        )
+    yield cruft.create(
+        "https://github.com/cruft/cookiecutter-test",
+        Path(tmpdir),
+        directory="dir",
+        checkout="updated",
     )
 
 
@@ -148,8 +144,7 @@ def test_update(cruft_runner, cookiecutter_dir):
 
 
 def test_update_with_conflicts(cruft_runner, cookiecutter_dir):
-    with (cookiecutter_dir / "README.md").open("w") as f:
-        f.write("conflicts")
+    (cookiecutter_dir / "README.md").write_text("conflicts")
     result = cruft_runner(["update", "--project-dir", str(cookiecutter_dir), "-y", "-c", "updated"])
     assert "cruft has been updated" in result.stdout
     assert "Project directory may have *.rej files" in result.stdout
@@ -158,8 +153,7 @@ def test_update_with_conflicts(cruft_runner, cookiecutter_dir):
 
 
 def test_update_with_conflicts_with_git(cruft_runner, cookiecutter_dir):
-    with (cookiecutter_dir / "README.md").open("w") as f:
-        f.write("conflicts")
+    (cookiecutter_dir / "README.md").write_text("conflicts")
     # Commit the changes so that the repo is clean
     run(["git", "init"], cwd=cookiecutter_dir)
     run(["git", "add", "-A"], cwd=cookiecutter_dir)
