@@ -100,7 +100,6 @@ def _get_deleted_files(template_dir: Path, project_dir: Path):
     cwd = Path.cwd()
     os.chdir(template_dir)
     template_paths = set(Path(".").glob("**/*"))
-    os.chdir(cwd)
     os.chdir(project_dir)
     deleted_paths = set(filter(lambda path: not path.exists(), template_paths))
     os.chdir(cwd)
